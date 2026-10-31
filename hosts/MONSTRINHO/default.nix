@@ -8,6 +8,7 @@
 let
   isolinoKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHmdvVI+bCuVV30u90N68GFXu4SY439a9wKV1SOIr7Rs isolino@MONSTRAO";
   llmAgents = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
+  uid = user: toString config.users.users.${user}.uid;
 in
 {
   imports = [
@@ -75,13 +76,32 @@ in
     };
   };
   networking.firewall.extraInputRules = "ip saddr 192.168.15.0/24 tcp dport 22 accept";
-  # The subscription proxy takes no client keys, so this is what keeps lavietos's agents off isolino's subscriptions.
+  # Our agents listen on loopback without authentication (dev servers, agent-browser's Chromium DevTools port), so only
+  # their user and root may connect. The output hook sees only the sending socket: the SYN shows the client's UID, and
+  # only the SYN-ACK shows the listener's. So the SYN stores the client's UID in the conntrack mark (whose 0xff0000 bits
+  # are tailscaled's, saved at priority mangle), a SYN-ACK to another user is dropped and flagged, and the client's
+  # retried SYN, a second later, is refused. UDP requests still get through; only the replies are dropped.
   networking.nftables.tables.loopback-owners = {
     family = "inet";
     content = ''
       chain output {
-        type filter hook output priority filter; policy accept;
-        oifname "lo" tcp dport ${toString config.services.cliproxyapi.settings.server.port} meta skuid != ${toString config.users.users.isolino.uid} reject
+        type filter hook output priority mangle - 5; policy accept;
+        oifname "lo" ct direction original ct mark & 0x1000000 != 0 reject
+        oifname "lo" ct state new ct mark set meta skuid
+        ${lib.concatMapStrings
+          (user: ''
+            oifname "lo" ct direction reply meta skuid ${uid user} ct mark & 0xffff != { 0, ${uid user} } ct mark set ct mark | 0x1000000 drop
+          '')
+          [
+            "isolino"
+            "lavietos"
+          ]
+        }
+        # Root's proxies to one user. CLIProxyAPI takes no client keys, so this is what keeps lavietos's agents off
+        # isolino's subscriptions; Tailscale Serve would let each user's agents into the other's T3.
+        oifname "lo" tcp dport ${toString config.services.cliproxyapi.settings.server.port} meta skuid != ${uid "isolino"} reject
+        oifname "lo" tcp dport 4${uid "isolino"} meta skuid != ${uid "isolino"} reject
+        oifname "lo" tcp dport 4${uid "lavietos"} meta skuid != ${uid "lavietos"} reject
       }
     '';
   };
@@ -101,14 +121,15 @@ in
     # Deploys go to root@: making isolino a trusted Nix user would let its agents become root.
     root.openssh.authorizedKeys.keys = [ isolinoKey ];
     # No wheel for either user: our agents run as us, and sudo would give them the whole machine.
+    # The T3 ports and loopback-owners depend on these uids.
     isolino = {
-      # loopback-owners matches it by number.
       uid = 1000;
       openssh.authorizedKeys.keys = [ isolinoKey ];
       packages = [ llmAgents.agent-browser ];
       linger = true;
     };
     lavietos = {
+      uid = 1001;
       isNormalUser = true;
       openssh.authorizedKeys.keys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJU9VqlHeLAvukPFLKW8vN4BedMxQBasFvn6JYD4NCZe luis@DESKTOP-I16FQN7"
