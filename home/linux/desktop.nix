@@ -85,12 +85,7 @@ in
       nativeBuildInputs = [ pkgs.makeWrapper ];
       postBuild = "wrapProgram $out/bin/sioyek --set QT_QPA_PLATFORM xcb";
     };
-    config = {
-      startup_commands = [ "toggle_custom_color" ];
-      background_color = palette.bg_0;
-      custom_background_color = palette.bg_0;
-      custom_text_color = palette.fg_0;
-    };
+    config.startup_commands = [ "toggle_dark_mode" ];
   };
 
   xdg.mimeApps = {
