@@ -56,8 +56,12 @@
   services.fwupd.enable = true;
 
   services.tailscale.enable = true;
-  # Without resolved, tailscaled reads the upstream DNS servers when it starts, before DHCP has provided any.
-  services.resolved.enable = true;
+  services.resolved = {
+    # Without resolved, tailscaled reads the upstream DNS servers when it starts, before DHCP has provided any.
+    enable = true;
+    # Anything on the LAN can answer for any name over it, and the machines find each other through Tailscale's DNS.
+    settings.Resolve.LLMNR = false;
+  };
 
   # Completions for system packages in fish, which Ghostty starts. The login shell stays bash.
   programs.fish.enable = true;
