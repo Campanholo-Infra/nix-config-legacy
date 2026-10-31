@@ -9,6 +9,7 @@ let
   isolinoKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHmdvVI+bCuVV30u90N68GFXu4SY439a9wKV1SOIr7Rs isolino@MONSTRAO";
   llmAgents = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
   uid = user: toString config.users.users.${user}.uid;
+  servePort = user: "4${uid user}";
 in
 {
   imports = [
@@ -106,8 +107,8 @@ in
         # Root's proxies to one user. CLIProxyAPI takes no client keys, so this is what keeps lavietos's agents off
         # isolino's subscriptions; Tailscale Serve would let each user's agents into the other's T3.
         oifname "lo" tcp dport ${toString config.services.cliproxyapi.settings.server.port} meta skuid != ${uid "isolino"} reject
-        oifname "lo" tcp dport 4${uid "isolino"} meta skuid != ${uid "isolino"} reject
-        oifname "lo" tcp dport 4${uid "lavietos"} meta skuid != ${uid "lavietos"} reject
+        oifname "lo" tcp dport ${servePort "isolino"} meta skuid != ${uid "isolino"} reject
+        oifname "lo" tcp dport ${servePort "lavietos"} meta skuid != ${uid "lavietos"} reject
       }
     '';
   };
@@ -251,8 +252,8 @@ in
     script = ''
       tailscale wait --timeout=1m
       tailscale serve reset
-      tailscale serve --bg --https=41000 http://127.0.0.1:31000
-      tailscale serve --bg --https=41001 http://127.0.0.1:31001
+      tailscale serve --bg --https=${servePort "isolino"} http://127.0.0.1:3${uid "isolino"}
+      tailscale serve --bg --https=${servePort "lavietos"} http://127.0.0.1:3${uid "lavietos"}
     '';
     preStop = "tailscale serve reset";
     serviceConfig = {
