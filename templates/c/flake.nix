@@ -22,7 +22,6 @@
               pkg-config
               clang-tools
             ];
-            buildInputs = [ ];
             # clangd reads build/compile_commands.json.
             env.CMAKE_EXPORT_COMPILE_COMMANDS = "ON";
           };

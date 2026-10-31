@@ -16,9 +16,7 @@
           pkgs = nixpkgs.legacyPackages.${system};
         in
         {
-          default = pkgs.mkShellNoCC {
-            packages = [ ];
-          };
+          default = pkgs.mkShellNoCC { };
         }
       );
     };
