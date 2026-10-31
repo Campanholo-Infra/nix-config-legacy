@@ -234,6 +234,8 @@ in
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
+      # A oneshot has no start timeout, and serve can wait forever for HTTPS to be enabled on the tailnet.
+      TimeoutStartSec = "2min";
       # In case tailscaled takes longer, as without network at boot.
       Restart = "on-failure";
       RestartSec = 5;
