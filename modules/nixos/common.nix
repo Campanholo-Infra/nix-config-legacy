@@ -74,9 +74,6 @@
     };
   };
 
-  # Completions for system packages in fish, which Ghostty starts. The login shell stays bash.
-  programs.fish.enable = true;
-
   programs.nh = {
     enable = true;
     clean = {

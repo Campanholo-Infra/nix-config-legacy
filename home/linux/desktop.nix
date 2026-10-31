@@ -66,6 +66,10 @@ in
     platformTheme.name = "xdgdesktopportal";
   };
 
+  programs.fish = {
+    enable = true;
+    interactiveShellInit = "set -g fish_greeting";
+  };
   programs.ghostty = {
     enable = true;
     settings = {

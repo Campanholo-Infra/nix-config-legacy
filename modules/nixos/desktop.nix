@@ -33,6 +33,9 @@
   networking.modemmanager.enable = false;
   users.users.isolino.extraGroups = [ "networkmanager" ];
 
+  # Completions for system packages in fish, which Ghostty starts. The login shell stays bash.
+  programs.fish.enable = true;
+
   security.rtkit.enable = true;
   services.gvfs.enable = true;
   services.speechd.enable = false;
