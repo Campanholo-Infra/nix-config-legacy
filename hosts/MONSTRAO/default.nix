@@ -35,7 +35,8 @@
 
   # The driver keeps freed buffers instead of returning them, so niri grows to ~1 GiB of VRAM.
   # https://github.com/NVIDIA/egl-wayland/issues/126#issuecomment-2379945259
-  # Drop this once the driver's own nvidia-application-profiles-rc has a rule for niri.
+  # The driver's own nvidia-application-profiles-rc applies its "No VidMem Reuse" profile to other
+  # compositors; drop this once the driver ships a niri rule.
   environment.etc."nvidia/nvidia-application-profiles-rc.d/50-niri.json".text = builtins.toJSON {
     rules = [
       {
@@ -43,18 +44,7 @@
           feature = "procname";
           matches = "niri";
         };
-        profile = "Limit Free Buffer Pool On Wayland Compositors";
-      }
-    ];
-    profiles = [
-      {
-        name = "Limit Free Buffer Pool On Wayland Compositors";
-        settings = [
-          {
-            key = "GLVidHeapReuseRatio";
-            value = 0;
-          }
-        ];
+        profile = "No VidMem Reuse";
       }
     ];
   };
