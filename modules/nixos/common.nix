@@ -51,6 +51,8 @@
   # Otherwise anyone at the boot menu can add init=/bin/sh to the kernel command line.
   boot.loader.systemd-boot.editor = false;
 
+  boot.bcache.enable = false;
+
   time.timeZone = "America/Sao_Paulo";
 
   services.fwupd.enable = true;
