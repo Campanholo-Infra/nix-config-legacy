@@ -40,9 +40,6 @@ in
   };
   # Without a desktop nothing activates upower over D-Bus, so it would never see the battery run down.
   systemd.services.upower.wantedBy = [ "multi-user.target" ];
-  services.thermald.enable = true;
-  # This firmware has no usable adaptive policy: thermald exits and expects a restart to run without one, as upstream's unit does.
-  systemd.services.thermald.serviceConfig.Restart = "on-failure";
   zramSwap.enable = true;
   # Leave RAM outside users' workloads even if their zram pages don't compress.
   systemd.slices.user.sliceConfig = {
