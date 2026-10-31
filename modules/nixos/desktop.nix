@@ -29,10 +29,6 @@
   # https://niri-wm.github.io/niri/Application-Issues.html#gtk-4-dead-keys-compose
   environment.sessionVariables.GTK_IM_MODULE = "simple";
 
-  networking.networkmanager.enable = true;
-  networking.modemmanager.enable = false;
-  users.users.isolino.extraGroups = [ "networkmanager" ];
-
   # Completions for system packages in fish, which Ghostty starts. The login shell stays bash.
   programs.fish.enable = true;
 

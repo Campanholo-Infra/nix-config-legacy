@@ -73,6 +73,24 @@
       MulticastDNS = false;
     };
   };
+  # dhcpcd's resolvconf hook makes each protocol overwrite or clear the whole link's DNS in resolved.
+  networking.useNetworkd = true;
+  networking.useDHCP = false;
+  systemd.network.networks."10-ethernet" = {
+    matchConfig = {
+      Type = "ether";
+      Kind = "!*"; # physical interfaces have no kind
+    };
+    networkConfig = {
+      DHCP = "yes";
+      # Leaves temporary addresses to networking.tempAddresses; networkd's default turns them off.
+      IPv6PrivacyExtensions = "kernel";
+    };
+    # The router also offers itself as an IPv6 DNS server, and its replies to EDNS queries are malformed
+    # (the OPT record ahead of the answer). Keep the DHCPv4 servers only.
+    ipv6AcceptRAConfig.UseDNS = false;
+    dhcpV6Config.UseDNS = false;
+  };
 
   programs.nh = {
     enable = true;
