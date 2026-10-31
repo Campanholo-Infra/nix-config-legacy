@@ -28,9 +28,13 @@ layout {
 
     default-column-width { proportion 1.0; }
 
-    focus-ring {
+    focus-ring { off; }
+
+    border {
+        on
         width 1
-        active-color "@bg_2@"
+        active-color "@fg_0@"
+        inactive-color "@bg_2@"
     }
 }
 
