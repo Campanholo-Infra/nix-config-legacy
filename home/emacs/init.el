@@ -21,6 +21,13 @@
 (use-package envrc
   :hook (after-init . envrc-global-mode))
 
+;; Emacs 31's Flymake disables every backend in buffers outside
+;; trusted-content (Flymake:! in the mode line). These only relay the
+;; diagnostics of language servers, which run whatever the trust.
+;; Remove eglot's with Emacs 31.2, which marks it itself.
+(put 'eglot-flymake-backend 'flymake-always-safe t)
+(put 'lsp-diagnostics--flymake-backend 'flymake-always-safe t)
+
 (use-package eglot
   :hook ((c-mode c++-mode java-mode tuareg-mode nix-mode) . eglot-ensure))
 
