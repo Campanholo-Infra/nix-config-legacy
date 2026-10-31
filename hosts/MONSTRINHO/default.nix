@@ -112,6 +112,21 @@ in
       }
     '';
   };
+  # The owner's devices connect here, never the reverse. MONSTRAO's tailscaled lets every SYN to its peerapi port past
+  # its ACLs (net/tstun/wrap.go) and into its netstack, ahead of its firewall (wgengine/netstack/netstack.go), and takes
+  # MONSTRINHO, logged in as the same user, for one of the owner's own devices. Root's connections too: tailscaled dials
+  # as root for `tailscale nc`, which any user can run.
+  networking.nftables.tables.tailnet-egress = {
+    family = "inet";
+    content = ''
+      chain output {
+        type filter hook output priority filter; policy accept;
+        oifname "tailscale0" ip daddr 100.100.100.100 meta l4proto { tcp, udp } th dport 53 accept
+        oifname "tailscale0" ip6 daddr fd7a:115c:a1e0::53 meta l4proto { tcp, udp } th dport 53 accept
+        oifname "tailscale0" ct state new reject
+      }
+    '';
+  };
   # dhcpcd's resolvconf hook makes each protocol overwrite or clear the whole link's DNS in resolved.
   networking.useNetworkd = true;
   networking.useDHCP = false;
