@@ -27,7 +27,7 @@ in
     systemd.enable = false;
     xwaylandSatellitePackage = null;
     portalPackage = null;
-    extraConfig = builtins.readFile ./niri.kdl;
+    extraConfig = builtins.replaceStrings [ "@bg_2@" ] [ palette.bg_2 ] (builtins.readFile ./niri.kdl);
   };
 
   fonts.fontconfig.defaultFonts = {

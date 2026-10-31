@@ -30,8 +30,7 @@ layout {
 
     focus-ring {
         width 1
-        // Selenized black bg_2.
-        active-color "#3b3b3b"
+        active-color "@bg_2@"
     }
 }
 
