@@ -24,6 +24,15 @@
 (use-package eglot
   :hook ((c-mode c++-mode java-mode tuareg-mode nix-mode) . eglot-ensure))
 
+;; Deferred like eglot-ensure, so lake comes from the project's envrc
+;; environment.
+(use-package lean4-mode
+  :hook (lean4-mode . lsp-deferred))
+
+;; yasnippet isn't installed, and lsp-mode warns at each server start.
+(use-package lsp-mode
+  :custom (lsp-enable-snippet nil))
+
 (use-package web-mode
   :mode ("\\.html?\\'" "\\.[jt]sx\\'"))
 
