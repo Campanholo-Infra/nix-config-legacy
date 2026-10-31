@@ -25,6 +25,9 @@ in
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
     };
+    # Blanking the console is what turns the closed lid's eDP panel and backlight off.
+    # A lit panel after a root DRM client exits doesn't mean this is ineffective: the
+    # client relights it without unblanking fbcon.
     kernelParams = [ "consoleblank=60" ];
   };
 
