@@ -8,8 +8,6 @@
 let
   isolinoKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHmdvVI+bCuVV30u90N68GFXu4SY439a9wKV1SOIr7Rs isolino@MONSTRAO";
   llmAgents = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
-  # The subscription proxy takes no client keys, so this is what keeps lavietos's agents off isolino's subscriptions.
-  proxyOnlyForIsolino = "OUTPUT -o lo -p tcp --dport ${toString config.services.cliproxyapi.settings.server.port} -m owner ! --uid-owner isolino -j REJECT";
 in
 {
   imports = [
@@ -76,12 +74,16 @@ in
       KbdInteractiveAuthentication = false;
     };
   };
-  networking.firewall = {
-    extraCommands = ''
-      iptables -A nixos-fw -p tcp --dport 22 -s 192.168.15.0/24 -j nixos-fw-accept
-      iptables -A ${proxyOnlyForIsolino}
+  networking.firewall.extraInputRules = "ip saddr 192.168.15.0/24 tcp dport 22 accept";
+  # The subscription proxy takes no client keys, so this is what keeps lavietos's agents off isolino's subscriptions.
+  networking.nftables.tables.loopback-owners = {
+    family = "inet";
+    content = ''
+      chain output {
+        type filter hook output priority filter; policy accept;
+        oifname "lo" tcp dport ${toString config.services.cliproxyapi.settings.server.port} meta skuid != ${toString config.users.users.isolino.uid} reject
+      }
     '';
-    extraStopCommands = "iptables -D ${proxyOnlyForIsolino} || true";
   };
   # dhcpcd's resolvconf hook makes each protocol overwrite or clear the whole link's DNS in resolved.
   networking.useNetworkd = true;
@@ -94,13 +96,14 @@ in
     ipv6AcceptRAConfig.UseDNS = false;
     dhcpV6Config.UseDNS = false;
   };
-  networking.firewall.trustedInterfaces = [ "tailscale0" ];
 
   users.users = {
     # Deploys go to root@: making isolino a trusted Nix user would let its agents become root.
     root.openssh.authorizedKeys.keys = [ isolinoKey ];
     # No wheel for either user: our agents run as us, and sudo would give them the whole machine.
     isolino = {
+      # loopback-owners matches it by number.
+      uid = 1000;
       openssh.authorizedKeys.keys = [ isolinoKey ];
       packages = [ llmAgents.agent-browser ];
       linger = true;
