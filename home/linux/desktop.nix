@@ -2,6 +2,7 @@
   config,
   inputs,
   lib,
+  osConfig,
   pkgs,
   ...
 }:
@@ -19,8 +20,15 @@ in
 {
   imports = [ inputs.helium.homeModules.default ];
 
-  xdg.configFile."niri/config.kdl".source =
-    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix-config/home/linux/niri.kdl";
+  # The NixOS module already installs niri's units, portals and xwayland-satellite.
+  wayland.windowManager.niri = {
+    enable = true;
+    package = osConfig.programs.niri.package;
+    systemd.enable = false;
+    xwaylandSatellitePackage = null;
+    portalPackage = null;
+    extraConfig = builtins.readFile ./niri.kdl;
+  };
 
   fonts.fontconfig.defaultFonts = {
     sansSerif = [ sans.name ];
