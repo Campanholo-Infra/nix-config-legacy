@@ -122,14 +122,6 @@ in
   # With no wheel, sudo is only a setuid-root binary for agents to probe.
   security.sudo.enable = false;
 
-  systemd.tmpfiles.rules = [
-    "d /srv/isolino 0700 isolino users"
-    "d /srv/lavietos 0700 lavietos users"
-    "d /srv/shared 2770 root users"
-    # Keeps files in the shared directory writable by both of us whatever the creator's umask.
-    "a+ /srv/shared - - - - default:group::rwx"
-  ];
-
   programs.git.enable = true;
   # T3's bundled chrome-headless-shell and downloaded browsers like Playwright's are generic Linux binaries, which
   # NixOS can't run otherwise.
