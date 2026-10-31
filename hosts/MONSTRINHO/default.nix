@@ -290,10 +290,7 @@ in
     };
   };
 
-  home-manager.users.isolino.imports = [
-    ../../home/common.nix
-    ../../home/neovim.nix
-  ];
+  home-manager.users.isolino.imports = [ ../../home/common.nix ];
 
   system.stateVersion = "26.05";
 }
