@@ -56,6 +56,10 @@
           path = ./templates/java;
           description = "Java with jdtls";
         };
+        lean = {
+          path = ./templates/lean;
+          description = "Lean 4 with elan";
+        };
         ocaml = {
           path = ./templates/ocaml;
           description = "OCaml in a project-local opam switch";
