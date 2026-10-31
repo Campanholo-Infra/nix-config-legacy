@@ -74,8 +74,8 @@
       ../../home/common.nix
       ../../home/emacs
       ../../home/neovim.nix
-      ../../home/linux/desktop.nix
-      ../../home/linux/session.nix
+      ../../home/desktop/desktop.nix
+      ../../home/desktop/session.nix
     ];
     programs.claude-code.settings.autoMode = {
       soft_deny = [
