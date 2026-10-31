@@ -290,7 +290,14 @@ in
     };
   };
 
-  home-manager.users.isolino.imports = [ ../../home/common.nix ];
+  home-manager.users.isolino = {
+    imports = [ ../../home/common.nix ];
+    # MONSTRINHO has no GitHub SSH key, so fetch SSH URLs over HTTPS, where gh's credential helper logs in.
+    programs.git.settings.url."https://github.com/".insteadOf = [
+      "git@github.com:"
+      "ssh://git@github.com/"
+    ];
+  };
 
   system.stateVersion = "26.05";
 }
