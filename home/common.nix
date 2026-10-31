@@ -1,12 +1,9 @@
 {
-  inputs,
   osConfig,
   pkgs,
   ...
 }:
 {
-  imports = [ inputs.nix-index-database.homeModules.default ];
-
   home = {
     stateVersion = "26.05";
     packages = with pkgs; [
@@ -41,7 +38,6 @@
           "http://${proxy.host}:${toString proxy.port}";
       };
     };
-    nix-index-database.comma.enable = true;
     gh.enable = true;
     git = {
       enable = true;

@@ -18,7 +18,10 @@ let
   };
 in
 {
-  imports = [ inputs.helium.homeModules.default ];
+  imports = [
+    inputs.nix-index-database.homeModules.default
+    inputs.helium.homeModules.default
+  ];
 
   # The NixOS module already installs niri's units, portals and xwayland-satellite.
   wayland.windowManager.niri = {
@@ -70,6 +73,7 @@ in
     enable = true;
     interactiveShellInit = "set -g fish_greeting";
   };
+  programs.nix-index-database.comma.enable = true;
   programs.ghostty = {
     enable = true;
     settings = {
