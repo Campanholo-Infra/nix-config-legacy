@@ -155,7 +155,6 @@ in
     # The wrapper only adds providers to PATH: claude and pi are installed anyway, and the rest go unused.
     llmAgents.t3code.unwrapped
   ];
-  environment.defaultPackages = [ ];
   documentation.nixos.enable = false;
 
   # `hermes gateway install` writes a unit that runs Nix's bare Python, which can't load Hermes.

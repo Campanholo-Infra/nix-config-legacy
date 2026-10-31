@@ -13,6 +13,7 @@
     # For logging the proxy in to the subscriptions.
     config.services.cliproxyapi.package
   ];
+  environment.defaultPackages = [ ];
 
   # Pools the Claude subscriptions, using each until it runs out. It takes no client keys, so Claude Code
   # keeps its claude.ai login, and the features that need it, while sending model requests here.
