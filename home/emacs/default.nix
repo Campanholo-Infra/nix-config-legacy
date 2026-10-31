@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 {
   programs.emacs = {
     enable = true;
@@ -25,6 +25,5 @@
       ];
   };
 
-  home.file.".emacs.d/init.el".source =
-    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix-config/home/emacs/init.el";
+  home.file.".emacs.d/init.el".source = ./init.el;
 }
