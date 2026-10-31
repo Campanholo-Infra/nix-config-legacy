@@ -56,14 +56,7 @@ in
     mpv
   ];
 
-  programs.helium = {
-    enable = true;
-    # Without these, Chromium composes dead keys with its own built-in table instead of fcitx5.
-    flags = [
-      "--enable-wayland-ime"
-      "--wayland-text-input-version=3"
-    ];
-  };
+  programs.helium.enable = true;
 
   qt = {
     enable = true;

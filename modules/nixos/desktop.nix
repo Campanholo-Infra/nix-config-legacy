@@ -27,17 +27,10 @@
 
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
+    # GTK 4.20 leaves dead keys to an input method on Wayland; this has it compose them itself.
+    # https://niri-wm.github.io/niri/Application-Issues.html#gtk-4-dead-keys-compose
+    GTK_IM_MODULE = "simple";
   };
-
-  # niri doesn't compose dead keys, and on Wayland GTK 4 and Chromium leave it to an input method.
-  # https://niri-wm.github.io/niri/Application-Issues.html#gtk-4-dead-keys-compose
-  i18n.inputMethod = {
-    enable = true;
-    type = "fcitx5";
-    fcitx5.waylandFrontend = true;
-  };
-  # fcitx5 composes with the locale's table: en_US maps dead_acute + c to ć, pt_BR to ç.
-  i18n.extraLocaleSettings.LC_CTYPE = "pt_BR.UTF-8";
 
   networking.networkmanager.enable = true;
   networking.modemmanager.enable = false;

@@ -1,8 +1,8 @@
 input {
     keyboard {
         xkb {
-            layout "us,us"
-            variant ",intl"
+            layout "us"
+            variant "altgr-intl"
         }
         numlock
     }
@@ -184,9 +184,6 @@ binds {
     Mod+Shift+V { switch-focus-between-floating-and-tiling; }
 
     Mod+W { toggle-column-tabbed-display; }
-
-    Mod+Space       { switch-layout "next"; }
-    Mod+Shift+Space { switch-layout "prev"; }
 
     Print { screenshot; }
     Ctrl+Print { screenshot-screen; }

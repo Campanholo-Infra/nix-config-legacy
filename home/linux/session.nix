@@ -20,7 +20,6 @@ in
       modules-left = [ "niri/workspaces" ];
       modules-center = [ "niri/window" ];
       modules-right = [
-        "niri/language"
         "pulseaudio"
         "clock"
       ];
@@ -58,7 +57,7 @@ in
       #window {
         padding: 0 8px;
       }
-      #language, #pulseaudio, #clock {
+      #pulseaudio, #clock {
         padding: 0 8px;
         border-left: 1px solid ${palette.bg_2};
       }
