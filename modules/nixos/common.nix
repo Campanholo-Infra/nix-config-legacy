@@ -59,12 +59,11 @@
   services.fwupd.enable = true;
 
   networking.nftables.enable = true;
-  # tailscaled's own iptables rules accept its port and interface, but the nftables firewall drops them anyway.
+  # tailscaled's own iptables rules accept its port, but the nftables firewall drops it anyway.
   services.tailscale = {
     enable = true;
     openFirewall = true;
   };
-  networking.firewall.trustedInterfaces = [ "tailscale0" ];
   services.resolved = {
     # Without resolved, tailscaled reads the upstream DNS servers when it starts, before DHCP has provided any.
     enable = true;

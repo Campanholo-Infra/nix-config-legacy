@@ -79,6 +79,9 @@ in
     };
   };
   networking.firewall.extraInputRules = "ip saddr 192.168.15.0/24 tcp dport 22 accept";
+  # SSH and Serve are reached over Tailscale. tailscaled's own iptables rules accept tailscale0, but the nftables
+  # firewall drops it anyway.
+  networking.firewall.trustedInterfaces = [ "tailscale0" ];
   # Our agents listen on loopback without authentication (dev servers, agent-browser's Chromium DevTools port), so only
   # their user and root may connect. The output hook sees only the sending socket: the SYN shows the client's UID, and
   # only the SYN-ACK shows the listener's. So the SYN stores the client's UID in the conntrack mark (whose 0xff0000 bits
