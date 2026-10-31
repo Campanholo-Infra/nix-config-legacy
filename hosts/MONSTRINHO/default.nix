@@ -102,6 +102,7 @@ in
     # No wheel for either user: our agents run as us, and sudo would give them the whole machine.
     isolino = {
       openssh.authorizedKeys.keys = [ isolinoKey ];
+      packages = [ llmAgents.agent-browser ];
       linger = true;
     };
     lavietos = {
