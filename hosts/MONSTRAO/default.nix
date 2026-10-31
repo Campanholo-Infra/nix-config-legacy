@@ -72,13 +72,8 @@
 
   users.users.isolino.extraGroups = [ "wheel" ];
 
-  system.autoUpgrade = {
-    enable = true;
-    flake = "github:enzo-campanholo/nix-config-legacy#MONSTRAO";
-    upgrade = false;
-    # Never load a new NVIDIA driver under a running session.
-    operation = "boot";
-  };
+  # Never load a new NVIDIA driver under a running session.
+  system.autoUpgrade.operation = "boot";
 
   home-manager.users.isolino =
     { config, ... }:

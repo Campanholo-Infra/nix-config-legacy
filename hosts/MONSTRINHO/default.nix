@@ -241,9 +241,6 @@ in
   };
 
   system.autoUpgrade = {
-    enable = true;
-    flake = "github:enzo-campanholo/nix-config-legacy#MONSTRINHO";
-    upgrade = false;
     allowReboot = true;
     rebootWindow = {
       lower = "04:00";

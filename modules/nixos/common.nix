@@ -42,6 +42,12 @@
   };
   system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
 
+  system.autoUpgrade = {
+    enable = true;
+    flake = "github:enzo-campanholo/nix-config-legacy#${config.networking.hostName}";
+    upgrade = false;
+  };
+
   # Otherwise anyone at the boot menu can add init=/bin/sh to the kernel command line.
   boot.loader.systemd-boot.editor = false;
 
