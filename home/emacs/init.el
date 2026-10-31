@@ -17,14 +17,12 @@
   :config (evil-collection-init))
 
 ;; Late, so each buffer gets its project's direnv environment before
-;; eglot or Proof General look for executables.
+;; eglot looks for executables.
 (use-package envrc
   :hook (after-init . envrc-global-mode))
 
 (use-package eglot
   :hook ((c-mode c++-mode java-mode tuareg-mode nix-mode) . eglot-ensure))
-
-(use-package proof-general)
 
 (use-package web-mode
   :mode ("\\.html?\\'" "\\.[jt]sx\\'"))
@@ -32,8 +30,3 @@
 (use-package markdown-mode
   :mode ("\\.md\\'" . gfm-mode)
   :custom (markdown-fontify-code-blocks-natively t))
-
-(use-package sail-mode
-  :mode ("\\.sail\\'" . sail-mode))
-
-(add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode))
