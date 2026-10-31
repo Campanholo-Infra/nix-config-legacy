@@ -27,10 +27,25 @@
 ;; Deferred like eglot-ensure, so lake comes from the project's envrc
 ;; environment.
 (use-package lean4-mode
-  :hook (lean4-mode . lsp-deferred))
+  :hook (lean4-mode . lsp-deferred)
+  :config
+  ;; Lean answers inlay hint requests partially while it elaborates, then
+  ;; asks for them again. lsp-mode has no handler for that, so it warns
+  ;; and keeps the partial hints. Each request cancels the last, so only
+  ;; the selected window's are re-requested. Remove when lsp-mode handles
+  ;; it: https://github.com/emacs-lsp/lsp-mode/issues/4230
+  (puthash "workspace/inlayHint/refresh"
+           (lambda (workspace _params)
+             (with-current-buffer (window-buffer)
+               (when (and lsp-inlay-hints-mode
+                          (memq workspace lsp--buffer-workspaces))
+                 (lsp-update-inlay-hints (window-start) (window-end nil t))))
+             nil)
+           (lsp--client-request-handlers (gethash 'lean4-lsp lsp-clients))))
 
 (use-package lsp-mode
   :custom
+  (lsp-inlay-hint-enable t)
   ;; yasnippet and company aren't installed, and lsp-mode warns at each
   ;; server start and buffer.
   (lsp-enable-snippet nil)
