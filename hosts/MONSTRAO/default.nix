@@ -59,7 +59,12 @@
 
   programs.nh.flake = "/home/isolino/nix-config";
 
-  users.users.isolino.extraGroups = [ "wheel" ];
+  users.users.isolino = {
+    extraGroups = [ "wheel" ];
+    # Root-only, outside this public repo. If missing, activation only warns and locks
+    # isolino; if empty, console login takes no password.
+    hashedPasswordFile = "/var/lib/hashed-passwords/isolino";
+  };
 
   # Never load a new NVIDIA driver under a running session.
   system.autoUpgrade.operation = "boot";

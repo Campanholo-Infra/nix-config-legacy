@@ -100,6 +100,7 @@
     };
   };
 
+  users.mutableUsers = false;
   users.users.isolino.isNormalUser = true;
 
   home-manager = {
