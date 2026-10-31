@@ -17,11 +17,15 @@
         in
         {
           default = pkgs.mkShell {
-            packages = with pkgs; [
-              cmake
-              pkg-config
-              clang-tools
-            ];
+            packages =
+              with pkgs;
+              [
+                cmake
+                pkg-config
+                clang-tools
+              ]
+              # On aarch64-darwin nixpkgs' gdb only debugs x86_64 programs; macOS has lldb.
+              ++ lib.optional stdenv.hostPlatform.isLinux gdb;
             # clangd reads build/compile_commands.json.
             env.CMAKE_EXPORT_COMPILE_COMMANDS = "ON";
           };
