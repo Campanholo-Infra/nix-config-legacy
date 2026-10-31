@@ -27,6 +27,10 @@
       mutableSettings = true;
       settings = {
         autoMemoryEnabled = false;
+        enabledPlugins = {
+          "cc-plugin-telemetry@builtin" = false;
+          "cc-plugin-plugin-authoring@builtin" = false;
+        };
         attribution = {
           commit = "";
           pr = "";
