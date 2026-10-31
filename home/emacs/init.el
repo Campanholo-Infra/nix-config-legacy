@@ -29,9 +29,12 @@
 (use-package lean4-mode
   :hook (lean4-mode . lsp-deferred))
 
-;; yasnippet isn't installed, and lsp-mode warns at each server start.
 (use-package lsp-mode
-  :custom (lsp-enable-snippet nil))
+  :custom
+  ;; yasnippet and company aren't installed, and lsp-mode warns at each
+  ;; server start and buffer.
+  (lsp-enable-snippet nil)
+  (lsp-completion-provider :none))
 
 (use-package web-mode
   :mode ("\\.html?\\'" "\\.[jt]sx\\'"))
