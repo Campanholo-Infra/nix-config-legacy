@@ -35,4 +35,10 @@
   };
 
   home.file.".emacs.d/init.el".source = ./init.el;
+
+  # eglot's Nix language server, which formats with nixfmt.
+  home.packages = with pkgs; [
+    nixd
+    nixfmt
+  ];
 }

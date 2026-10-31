@@ -67,7 +67,6 @@
 
   home-manager.users.isolino.imports = [
     ../../home/common.nix
-    ../../home/dev.nix
     ../../home/emacs
     ../../home/neovim.nix
     ../../home/linux/desktop.nix
