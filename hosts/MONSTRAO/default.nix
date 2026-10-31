@@ -26,10 +26,10 @@
     # Blackwell is only supported by the open kernel modules.
     open = true;
     powerManagement.enable = true;
+    nvidiaSettings = false;
   };
   nixpkgs.config.allowUnfreePackages = [
     "nvidia-x11"
-    "nvidia-settings"
     "yEd"
   ];
 
