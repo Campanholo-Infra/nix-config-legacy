@@ -52,20 +52,8 @@ in
     nautilus
     wl-clipboard
     playerctl
-    yed
     loupe
     mpv
-    # shared-mime-info has no GraphML type, so .graphml files are detected as XML and open in the browser.
-    (writeTextDir "share/mime/packages/graphml.xml" ''
-      <?xml version="1.0" encoding="UTF-8"?>
-      <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
-        <mime-type type="application/graphml+xml">
-          <comment>GraphML document</comment>
-          <sub-class-of type="application/xml"/>
-          <glob pattern="*.graphml"/>
-        </mime-type>
-      </mime-info>
-    '')
   ];
 
   programs.helium = {
@@ -109,13 +97,6 @@ in
     };
   };
 
-  xdg.desktopEntries.yed = {
-    name = "yEd";
-    exec = "yed %F";
-    categories = [ "Graphics" ];
-    mimeType = [ "application/graphml+xml" ];
-  };
-
   xdg.mimeApps = {
     enable = true;
     defaultApplications = {
@@ -124,7 +105,6 @@ in
       "x-scheme-handler/https" = "helium.desktop";
       "application/pdf" = "sioyek.desktop";
       "text/plain" = "emacs.desktop";
-      "application/graphml+xml" = "yed.desktop";
     }
     // lib.genAttrs [
       "image/gif"

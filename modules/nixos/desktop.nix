@@ -27,8 +27,6 @@
 
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
-    # Java AWT assumes a reparenting window manager unless it recognises one; xwayland-satellite isn't.
-    _JAVA_AWT_WM_NONREPARENTING = "1";
   };
 
   # niri doesn't compose dead keys, and on Wayland GTK 4 and Chromium leave it to an input method.

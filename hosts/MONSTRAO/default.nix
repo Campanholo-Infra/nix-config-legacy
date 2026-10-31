@@ -30,7 +30,6 @@
   };
   nixpkgs.config.allowUnfreePackages = [
     "nvidia-x11"
-    "yEd"
   ];
 
   # The driver keeps freed buffers instead of returning them, so niri grows to ~1 GiB of VRAM.
