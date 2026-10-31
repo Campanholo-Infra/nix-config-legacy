@@ -3,6 +3,8 @@
 (setq custom-file (locate-user-emacs-file "custom.el"))
 (load custom-file 'noerror)
 
+(setopt inhibit-startup-screen t)
+
 (load-theme 'solarized-selenized-black t)
 (set-face-attribute 'default nil :family "monospace")
 
