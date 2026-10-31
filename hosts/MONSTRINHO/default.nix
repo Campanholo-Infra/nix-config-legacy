@@ -120,8 +120,8 @@ in
   security.sudo.enable = false;
 
   programs.git.enable = true;
-  # T3's bundled chrome-headless-shell and downloaded browsers like Playwright's are generic Linux binaries, which
-  # NixOS can't run otherwise.
+  # T3 downloads chrome-headless-shell into ~/.t3/tools, and Playwright and Puppeteer download browsers into ~/.cache:
+  # generic Linux binaries, which NixOS can't run otherwise.
   programs.nix-ld = {
     enable = true;
     libraries = with pkgs; [
@@ -143,6 +143,9 @@ in
       alsa-lib
       fontconfig
       freetype
+      cairo
+      pango
+      cups
     ];
   };
   environment.systemPackages = [
