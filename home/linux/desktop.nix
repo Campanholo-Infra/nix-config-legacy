@@ -58,6 +58,7 @@ in
 
   programs.helium.enable = true;
 
+  # Gives Qt apps (sioyek, CoolerControl) the portal's dark color scheme and native file dialogs.
   qt = {
     enable = true;
     platformTheme.name = "xdgdesktopportal";
