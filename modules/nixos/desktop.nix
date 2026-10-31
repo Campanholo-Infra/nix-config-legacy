@@ -25,12 +25,9 @@
 
   services.logind.settings.Login.HandlePowerKey = "suspend";
 
-  environment.sessionVariables = {
-    NIXOS_OZONE_WL = "1";
-    # GTK 4.20 leaves dead keys to an input method on Wayland; this has it compose them itself.
-    # https://niri-wm.github.io/niri/Application-Issues.html#gtk-4-dead-keys-compose
-    GTK_IM_MODULE = "simple";
-  };
+  # GTK 4.20 leaves dead keys to an input method on Wayland; this has it compose them itself.
+  # https://niri-wm.github.io/niri/Application-Issues.html#gtk-4-dead-keys-compose
+  environment.sessionVariables.GTK_IM_MODULE = "simple";
 
   networking.networkmanager.enable = true;
   networking.modemmanager.enable = false;
