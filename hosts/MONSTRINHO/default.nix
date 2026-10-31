@@ -131,8 +131,15 @@ in
   networking.useNetworkd = true;
   networking.useDHCP = false;
   systemd.network.networks."10-ethernet" = {
-    matchConfig.Name = "enp2s0";
-    networkConfig.DHCP = "yes";
+    matchConfig = {
+      Type = "ether";
+      Kind = "!*"; # physical interfaces have no kind
+    };
+    networkConfig = {
+      DHCP = "yes";
+      # Leaves temporary addresses to networking.tempAddresses; networkd's default turns them off.
+      IPv6PrivacyExtensions = "kernel";
+    };
     # The router also offers itself as an IPv6 DNS server, and its replies to EDNS queries are malformed
     # (the OPT record ahead of the answer). Keep the DHCPv4 servers only.
     ipv6AcceptRAConfig.UseDNS = false;
