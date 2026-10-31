@@ -113,6 +113,9 @@ in
       }
     '';
   };
+  # A SYN cookie's SYN-ACK has no socket (tcp_make_synack in net/ipv4/tcp_output.c), so `meta skuid` matches nothing and
+  # loopback-owners lets it through: a user who fills the other's listen backlog would connect. It covers IPv6 too.
+  boot.kernel.sysctl."net.ipv4.tcp_syncookies" = 0;
   # The owner's devices connect here, never the reverse. MONSTRAO's tailscaled lets every SYN to its peerapi port past
   # its ACLs (net/tstun/wrap.go) and into its netstack, ahead of its firewall (wgengine/netstack/netstack.go), and takes
   # MONSTRINHO, logged in as the same user, for one of the owner's own devices. Root's connections too: tailscaled dials
