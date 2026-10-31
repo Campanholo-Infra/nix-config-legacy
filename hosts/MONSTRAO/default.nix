@@ -65,20 +65,14 @@
   # Never load a new NVIDIA driver under a running session.
   system.autoUpgrade.operation = "boot";
 
-  home-manager.users.isolino =
-    { config, ... }:
-    {
-      imports = [
-        ../../home/common.nix
-        ../../home/dev.nix
-        ../../home/emacs
-        ../../home/neovim.nix
-        ../../home/linux/desktop.nix
-        ../../home/linux/session.nix
-      ];
-      xdg.configFile."niri/host.kdl".source =
-        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix-config/hosts/MONSTRAO/niri.kdl";
-    };
+  home-manager.users.isolino.imports = [
+    ../../home/common.nix
+    ../../home/dev.nix
+    ../../home/emacs
+    ../../home/neovim.nix
+    ../../home/linux/desktop.nix
+    ../../home/linux/session.nix
+  ];
 
   system.stateVersion = "26.05";
 }
