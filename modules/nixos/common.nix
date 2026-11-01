@@ -46,7 +46,7 @@
 
   system.autoUpgrade = {
     enable = true;
-    flake = "github:enzo-campanholo/nix-config-legacy#${config.networking.hostName}";
+    flake = "github:Campanholo-Infra/nix-config-legacy#${config.networking.hostName}";
     upgrade = false;
   };
 
