@@ -10,6 +10,9 @@ let
   llmAgents = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
   uid = user: toString config.users.users.${user}.uid;
   servePort = user: "4${uid user}";
+  rexServeSocket = "/run/user/${uid "isolino"}/rex/serve.sock";
+  # Rex's clients try a bare host name on 443 first.
+  rexHttpsPort = "443";
 in
 {
   imports = [
@@ -56,10 +59,10 @@ in
     MemoryMax = "3G";
   };
   # T3 sizes app-t3code-agents.slice from physical RAM (5.6 GiB here) and doesn't rewrite its parent, so bound each
-  # user's agents and terminals here. Both users' (2 × 2G), the T3 servers and lavietos's Hermes (~1.1G) fit under the
-  # shared cap, so a busy agent can't make the T3 servers thrash.
-  # oomd kills the agent under pressure, and T3 fails its turn for Claude and pi. 80%: at 40%, oomd killed an agent
-  # running `nix flake check` that wasn't starved.
+  # user's agents and terminals here, isolino's Rex included. Both users' (2 × 2G), the T3 servers and lavietos's Hermes
+  # (~1.1G) fit under the shared cap, so a busy agent can't make the T3 servers thrash.
+  # oomd kills the agent under pressure, or all of Rex (one cgroup), and T3 fails its turn for Claude and pi. 80%: at
+  # 40%, oomd killed an agent running `nix flake check` that wasn't starved.
   systemd.user.slices.app-t3code.sliceConfig = {
     MemoryHigh = "1792M";
     MemoryMax = "2G";
@@ -106,10 +109,12 @@ in
           ]
         }
         # Root's proxies to one user. CLIProxyAPI takes no client keys, so this is what keeps lavietos's agents off
-        # isolino's subscriptions; Tailscale Serve would let each user's agents into the other's T3.
+        # isolino's subscriptions; Tailscale Serve would let each user's agents into the other's T3, and into isolino's
+        # Rex, which takes any request from this machine for its Tailscale owner.
         oifname "lo" tcp dport ${toString config.services.cliproxyapi.settings.server.port} meta skuid != ${uid "isolino"} reject
         oifname "lo" tcp dport ${servePort "isolino"} meta skuid != ${uid "isolino"} reject
         oifname "lo" tcp dport ${servePort "lavietos"} meta skuid != ${uid "lavietos"} reject
+        oifname "lo" tcp dport ${rexHttpsPort} meta skuid != ${uid "isolino"} reject
       }
     '';
   };
@@ -250,7 +255,7 @@ in
   # https://monstrinho.<tailnet>.ts.net:4%U, the only name its certificate covers. This owns the whole serve config, so
   # nothing served by hand outlives a restart.
   systemd.services.t3-tailscale-serve = {
-    description = "Serve T3 Code over HTTPS on the tailnet";
+    description = "Serve T3 Code and Rex over HTTPS on the tailnet";
     after = [ "tailscaled.service" ];
     wants = [ "tailscaled.service" ];
     wantedBy = [ "multi-user.target" ];
@@ -262,6 +267,7 @@ in
       tailscale serve reset
       tailscale serve --bg --https=${servePort "isolino"} http://127.0.0.1:3${uid "isolino"}
       tailscale serve --bg --https=${servePort "lavietos"} http://127.0.0.1:3${uid "lavietos"}
+      tailscale serve --bg --https=${rexHttpsPort} unix:${rexServeSocket}
     '';
     preStop = "tailscale serve reset";
     serviceConfig = {
@@ -284,7 +290,28 @@ in
   };
 
   home-manager.users.isolino = {
-    imports = [ ../../home/common.nix ];
+    imports = [
+      ../../home/common.nix
+      inputs.rex.homeManagerModules.default
+    ];
+    # Not services.rex.tailscale: its node key would sit in ~/.local/state/rex, where isolino's agents could take it to
+    # join the tailnet as one of the owner's devices, past tailnet-egress.
+    services.rex = {
+      enable = true;
+      extraListen = [ "tailnet-serve://${rexServeSocket}" ];
+    };
+    systemd.user.services.rex.Service = {
+      Slice = "app-t3code.slice";
+      # Otherwise the kernel's OOM kill of one process in it stops the server and every session.
+      OOMPolicy = "continue";
+      # Keeps the files its agents and terminals create, in /tmp too, private to their user.
+      UMask = "0077";
+    };
+    # For programs.rex's ssh guard, which keeps ssh from sending TERM=xterm-rex to hosts without that entry.
+    programs.ssh = {
+      enable = true;
+      enableDefaultConfig = false;
+    };
     # MONSTRINHO has no GitHub SSH key, so fetch SSH URLs over HTTPS, where gh's credential helper logs in.
     programs.git.settings.url."https://github.com/".insteadOf = [
       "git@github.com:"

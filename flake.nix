@@ -26,6 +26,11 @@
     };
     # Not following our nixpkgs: its binary cache only has builds against its own pin.
     llm-agents.url = "github:numtide/llm-agents.nix";
+    rex = {
+      # No stable channel yet.
+      url = "https://pkgs.superlogical.com/rex/nix/preview.tar.gz";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

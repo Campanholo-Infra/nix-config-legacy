@@ -52,6 +52,12 @@ systemctl --user restart t3
 
 Linking saves setup for the next server start. Use `systemctl --user status t3`, not `t3 service status`: the latter only checks T3's own installer. Don't run `t3 service install` alongside the Nix-managed service. Restarting T3 interrupts its terminals.
 
+## Rex on MONSTRINHO
+
+isolino has a Nix-managed personal Rex server, `rex.service`. Only the Tailscale account MONSTRINHO is logged in as can connect to it. From Rex's Apple apps, add `monstrinho.<tailnet>.ts.net` as a remote host. From another machine's CLI, run `rex -S https://monstrinho.<tailnet>.ts.net ls`. On MONSTRINHO, `rex client ls` shows who is connected.
+
+A switch never restarts the server, so it keeps running the old version after an update. Run `systemctl --user restart rex` to move to the new version. Restarting ends every Rex session.
+
 ## Recovery
 
 - Run `sudo nixos-rebuild switch --rollback` on MONSTRAO or `ssh root@MONSTRINHO nixos-rebuild switch --rollback`; if a machine doesn't boot, pick an older generation in its boot menu first. Then revert or fix the bad commit on GitHub: both machines reinstall `main` daily, and stopping `nixos-upgrade.timer` only lasts until the next reboot.
