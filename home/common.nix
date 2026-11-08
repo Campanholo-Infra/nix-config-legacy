@@ -1,4 +1,6 @@
 {
+  inputs,
+  lib,
   osConfig,
   pkgs,
   ...
@@ -41,6 +43,18 @@
           in
           "http://${proxy.host}:${toString proxy.port}";
       };
+      plugins.mattpocock-skills = inputs.mattpocock-skills;
+    };
+    pi-coding-agent = {
+      enable = true;
+      # Installed system-wide.
+      package = null;
+      # pi saves its own preferences, like the model, to the same file.
+      mutableSettings = true;
+      # The skills the Claude Code plugin ships. skills/ also holds in-progress and deprecated ones.
+      settings.skills = map (
+        skill: "${inputs.mattpocock-skills}/${lib.removePrefix "./" skill}"
+      ) (lib.importJSON "${inputs.mattpocock-skills}/.claude-plugin/plugin.json").skills;
     };
     gh.enable = true;
     git = {

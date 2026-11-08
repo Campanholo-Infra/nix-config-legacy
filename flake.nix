@@ -26,6 +26,10 @@
     };
     # Not following our nixpkgs: its binary cache only has builds against its own pin.
     llm-agents.url = "github:numtide/llm-agents.nix";
+    mattpocock-skills = {
+      url = "github:mattpocock/skills";
+      flake = false;
+    };
     rex = {
       # No stable channel yet.
       url = "https://pkgs.superlogical.com/rex/nix/preview.tar.gz";
