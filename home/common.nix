@@ -1,4 +1,5 @@
 {
+  config,
   inputs,
   lib,
   osConfig,
@@ -8,6 +9,11 @@
 {
   home = {
     stateVersion = "26.05";
+    # Not programs.claude-code.plugins: it links each top-level entry on its own, so Claude Code refuses every skill
+    # the manifest lists as escaping the plugin directory. Remove when this is fixed:
+    # https://github.com/nix-community/home-manager/issues/9906
+    file."${config.programs.claude-code.configDir}/skills/mattpocock-skills".source =
+      inputs.mattpocock-skills;
     packages = with pkgs; [
       ripgrep
       fd
@@ -43,7 +49,6 @@
           in
           "http://${proxy.host}:${toString proxy.port}";
       };
-      plugins.mattpocock-skills = inputs.mattpocock-skills;
     };
     pi-coding-agent = {
       enable = true;
