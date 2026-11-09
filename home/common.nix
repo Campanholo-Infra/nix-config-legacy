@@ -6,14 +6,33 @@
   pkgs,
   ...
 }:
+let
+  # The engine the plugin's launcher runs. Built from the plugin's own revision, so the two never drift.
+  impeccable = pkgs.rustPlatform.buildRustPackage {
+    pname = "impeccable";
+    inherit ((lib.importTOML "${inputs.impeccable}/Cargo.toml").workspace.package) version;
+    src = inputs.impeccable;
+    cargoLock.lockFile = "${inputs.impeccable}/Cargo.lock";
+    cargoBuildFlags = [
+      "--package"
+      "impeccable"
+    ];
+    # Its tests drive Chrome, which the build sandbox lacks.
+    doCheck = false;
+    meta.mainProgram = "impeccable";
+  };
+in
 {
   home = {
     stateVersion = "26.05";
     # Not programs.claude-code.plugins: it links each top-level entry on its own, so Claude Code refuses every skill
     # the manifest lists as escaping the plugin directory. Remove when this is fixed:
     # https://github.com/nix-community/home-manager/issues/9906
-    file."${config.programs.claude-code.configDir}/skills/mattpocock-skills".source =
-      inputs.mattpocock-skills;
+    file = {
+      "${config.programs.claude-code.configDir}/skills/mattpocock-skills".source =
+        inputs.mattpocock-skills;
+      "${config.programs.claude-code.configDir}/skills/impeccable".source = "${inputs.impeccable}/plugin";
+    };
     packages = with pkgs; [
       ripgrep
       fd
@@ -43,11 +62,15 @@
           commit = "";
           pr = "";
         };
-        env.ANTHROPIC_BASE_URL =
-          let
-            proxy = osConfig.services.cliproxyapi.settings.server;
-          in
-          "http://${proxy.host}:${toString proxy.port}";
+        env = {
+          ANTHROPIC_BASE_URL =
+            let
+              proxy = osConfig.services.cliproxyapi.settings.server;
+            in
+            "http://${proxy.host}:${toString proxy.port}";
+          # Otherwise the launcher downloads its engine into ~/.impeccable on first run.
+          IMPECCABLE_BIN = lib.getExe impeccable;
+        };
       };
     };
     pi-coding-agent = {

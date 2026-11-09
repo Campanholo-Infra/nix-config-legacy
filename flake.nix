@@ -30,6 +30,10 @@
       url = "github:mattpocock/skills";
       flake = false;
     };
+    impeccable = {
+      url = "github:pbakaus/impeccable";
+      flake = false;
+    };
     rex = {
       # No stable channel yet.
       url = "https://pkgs.superlogical.com/rex/nix/preview.tar.gz";

@@ -130,6 +130,22 @@
         "type": "github"
       }
     },
+    "impeccable": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1794183651,
+        "narHash": "sha256-TBbNLbdCF5iK7tpln8XrUf6Gd/IZLNI7gF47JLzjKLM=",
+        "owner": "pbakaus",
+        "repo": "impeccable",
+        "rev": "b7d1a80481e4b126231dc71121bdfa8674fe8282",
+        "type": "github"
+      },
+      "original": {
+        "owner": "pbakaus",
+        "repo": "impeccable",
+        "type": "github"
+      }
+    },
     "lanzaboote": {
       "inputs": {
         "crane": "crane",
@@ -266,6 +282,7 @@
         "disko": "disko",
         "helium": "helium",
         "home-manager": "home-manager",
+        "impeccable": "impeccable",
         "lanzaboote": "lanzaboote",
         "llm-agents": "llm-agents",
         "mattpocock-skills": "mattpocock-skills",
