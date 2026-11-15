@@ -20,6 +20,8 @@
   services.cliproxyapi = {
     enable = true;
     settings = {
+      # T3 runs genuine Claude Code with this entrypoint; otherwise the proxy cloaks it as an older version.
+      upstream.claude.header-defaults.native-entrypoints = [ "t3-code" ];
       server.host = "127.0.0.1";
       routing.strategy = "fill-first";
       # Otherwise it downloads its web panel from GitHub at every start, though nothing uses it.
